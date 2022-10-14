@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
 .d-flex.flex-row.justify-content-center
   .p-2
     table
@@ -89,25 +89,29 @@ export default Vue.extend({
   filters: {
     toHMS(tsec: number) {
       const hours = Math.trunc(tsec / 3600);
-      const minutes = Math.trunc((tsec - (hours * 3600)) / 60);
+      const minutes = Math.trunc((tsec - hours * 3600) / 60);
       const seconds = tsec - (hours * 3600 + minutes * 60);
-      return hours.toString().padStart(2, '0') + ":" +
-        minutes.toString().padStart(2, '0') + ":" + 
-        seconds.toString().padStart(2, '0');
-    }
+      return (
+        hours.toString().padStart(2, '0') +
+        ':' +
+        minutes.toString().padStart(2, '0') +
+        ':' +
+        seconds.toString().padStart(2, '0')
+      );
+    },
   },
-  data () {
+  data() {
     return {
-      rounds: "1",
-      movements: "1",
-      work: "20",
-      rest: "10",
-      leadIn: "10",
+      rounds: '1',
+      movements: '1',
+      work: '20',
+      rest: '10',
+      leadIn: '10',
 
       radius: 100,
       strokeWidth: 20,
-      dashArray: "",
-      
+      dashArray: '',
+
       timerCountdown: 0,
       elapsedTime: 0,
       estimate: 0,
@@ -116,7 +120,7 @@ export default Vue.extend({
       active: false,
       timerActive: undefined as NodeJS.Timer | undefined,
       timerElapsed: undefined as NodeJS.Timer | undefined,
-      message: "Press Start",
+      message: 'Press Start',
       dial: undefined,
     };
   },
@@ -147,8 +151,10 @@ export default Vue.extend({
       this.dashArray = dashArray;
     },
     computeEstimate() {
-      this.estimate = parseInt(this.rounds) * parseInt(this.movements) 
-        * (parseInt(this.work) + parseInt(this.rest));
+      this.estimate =
+        parseInt(this.rounds) *
+        parseInt(this.movements) *
+        (parseInt(this.work) + parseInt(this.rest));
     },
     main_beep() {
       const x = document.getElementById('beep-01a') as HTMLAudioElement;
@@ -190,22 +196,30 @@ export default Vue.extend({
             return resolve();
           }
           // Gotta be a sneaky way to to do this, man!
-          if (this.timerCountdown === 3 || this.timerCountdown === 2 || this.timerCountdown === 1) {
+          if (
+            this.timerCountdown === 3 ||
+            this.timerCountdown === 2 ||
+            this.timerCountdown === 1
+          ) {
             this.heads_up_beep();
           }
         }, 1000);
-      })
+      });
     },
     async start() {
       if (this.active === true) {
         return;
       }
-      document.addEventListener('click', function enableNoSleep() {
-        document.removeEventListener('click', enableNoSleep, false);
-        noSleep.enable();
-      }, false);
+      document.addEventListener(
+        'click',
+        function enableNoSleep() {
+          document.removeEventListener('click', enableNoSleep, false);
+          noSleep.enable();
+        },
+        false
+      );
       this.main_beep();
-      this.message = "Get Ready";
+      this.message = 'Get Ready';
       this.completedRounds = 0;
       this.completedMovements = 0;
       this.elapsedTime = 0.0;
@@ -222,11 +236,11 @@ export default Vue.extend({
             this.main_beep();
           }
           document.body.style.backgroundColor = 'lightgreen';
-          this.message = `Workout #${m+1}`;
+          this.message = `Workout #${m + 1}`;
           await this.startActiveTimer(parseInt(this.work));
           this.main_beep();
           document.body.style.backgroundColor = 'orange';
-          this.message = "Rest";
+          this.message = 'Rest';
           await this.startActiveTimer(parseInt(this.rest));
           ++this.completedMovements;
         }
@@ -237,7 +251,7 @@ export default Vue.extend({
       this.active = false;
       document.body.style.backgroundColor = '#eee';
       this.end_workout();
-      this.message = "Done";
+      this.message = 'Done';
       noSleep.disable();
     },
     stop() {
@@ -246,15 +260,15 @@ export default Vue.extend({
       }
       noSleep.disable();
       this.setGauge(0, 100);
-      this.message = "Press Start";
+      this.message = 'Press Start';
       this.main_beep();
       clearInterval(this.timerActive);
       clearInterval(this.timerElapsed);
       this.timerCountdown = 0;
       this.active = false;
       document.body.style.backgroundColor = '#eee';
-    }
-  }
+    },
+  },
 });
 </script>
 
